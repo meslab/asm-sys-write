@@ -1,6 +1,8 @@
 SYS_EXIT equ 1
 SYS_WRITE equ 4
 STDOUT equ 1
+_NOERRORS equ 0
+_ERRORS equ 1
 NL db 10
 
 section .text
@@ -18,6 +20,7 @@ _start:
 	mov	rax, SYS_WRITE
 	int	0x80
 	mov rcx, 10
+
 loop:
 	call print_hello
 	dec	rcx
@@ -34,8 +37,8 @@ loop:
 	mov	rax, SYS_WRITE
 	int	0x80
 
-	mov	ebx, 0
-	mov	eax, SYS_EXIT
+	mov	rbx, _NOERRORS
+	mov	rax, SYS_EXIT
 	int	0x80
 
 print_hello:
@@ -51,7 +54,8 @@ print_hello:
 section .data
 	msg db 'Hello, world!', 0xa 
 	len_msg equ $ - msg
-	stars times len_msg db '*'
+	stars times len_msg - 1  db '*'
 	len_stars equ $ - stars
+
 section .bss
 	res resb 1
