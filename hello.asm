@@ -23,7 +23,16 @@ _start:
 	mov	rbx, STDOUT
 	mov	rax, SYS_WRITE
 	int	0x80
+	rdtcs
+	mov rax, rdx
+	rdrand rax
+	mov rcx , rax
+	shr rdx, 64
 	mov rcx, 10
+	idiv rcx
+	add rdx, 1
+	mov rcx, rdx
+	;mov rcx, 3
 
 loop:
 	call print_hello
@@ -77,18 +86,15 @@ open_file:
 	push rax
 	push rbx
 	push rcx
-	push rdx
 	mov	rax, SYS_CREATE
 	mov rbx, filename
 	mov rcx, 0o0644
-	;mov rdx, 0o0644
 	int	0x80
 	cmp rax, -1
     je file_error
 
 	mov	[fd], rax
 	
-	pop rdx
 	pop rcx
 	pop rbx
 	pop rax
@@ -97,18 +103,15 @@ open_file:
 close_file:	
 	;push rax
 	mov	rax, SYS_CLOSE
-	mov	rdi, [fd]
+	mov	rbx, [fd]
 	int	0x80
 	;pop rax
 	ret
 
 file_error:
-    ; Handle file open error
-    ; You can implement error handling here
-    ; For example, printing an error message or exiting with a non-zero status
-    mov rax, 1          ; System call number for exit (sys_exit)
-    mov rbx, 1          ; Exit code 1 (error)
-    int 0x80            ; Call the kernel to exit
+    mov rax, _ERRORS
+    mov rbx, SYS_EXIT
+    int 0x80
 
 section .data
 	msg db 'Hello, world!', 0xa 
