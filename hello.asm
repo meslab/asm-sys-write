@@ -1,4 +1,6 @@
 SYS_EXIT equ 1
+SYS_OPEN equ 2
+SYS_CLOSE equ 3
 SYS_WRITE equ 4
 STDOUT equ 1
 _NOERRORS equ 0
@@ -9,7 +11,8 @@ section .text
 	global _start
 
 _start:
-	mov	rdx, len_msg
+	;call open_file
+	mov	rdx, len_stars
 	mov	rcx, stars
 	mov	rbx, STDOUT
 	mov	rax, SYS_WRITE
@@ -37,6 +40,7 @@ loop:
 	mov	rax, SYS_WRITE
 	int	0x80
 
+	;call close_file
 	mov	rbx, _NOERRORS
 	mov	rax, SYS_EXIT
 	int	0x80
@@ -51,11 +55,36 @@ print_hello:
 	pop rcx
 	ret
 
+open_file:
+	push rax
+	push rdx
+	push rdi
+	push rsi
+	mov	rax, SYS_OPEN
+	mov rdi, filename
+	mov rsi, 0x201
+	mov rdx, 0644
+	int	0x80
+	pop rsi
+	pop rdi
+	pop rdx
+	pop rax
+	ret
+
+close_file:	
+	push rax
+	mov	rax, SYS_CLOSE
+	mov	rdi, rax
+	int	0x80
+	pop rax
+	ret
+
 section .data
 	msg db 'Hello, world!', 0xa 
 	len_msg equ $ - msg
-	stars times len_msg - 1  db '*'
-	len_stars equ $ - stars
+	stars times len_msg  db '*', 0
+	len_stars equ $ - stars - 2
+	filename db 'file.txt', 0
 
 section .bss
 	res resb 1
