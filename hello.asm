@@ -2,42 +2,46 @@ section .text
 	global _start
 
 _start:
-	mov	edx, len_msg
-	mov	ecx, stars
-	mov	ebx, 1
-	mov	eax, 4
+	mov	rdx, len_msg
+	mov	rcx, stars
+	mov	rbx, 1
+	mov	rax, 4
 	int	0x80
-	mov	edx, 1
-	mov	ecx, nl
-	mov	ebx, 1
-	mov	eax, 4
+	mov	rdx, 1
+	mov	rcx, nl
+	mov	rbx, 1
+	mov	rax, 4
 	int	0x80
-	mov ecx, 10
+	mov rcx, 10
 loop:
-	mov [res], ecx
-	mov	edx, len_msg
-	mov	ecx, msg
-	mov	ebx, 1
-	mov	eax, 4
-	int	0x80
-	mov ecx, [res]
-	dec	ecx
+	push rcx
+	call print_hello
+	pop rcx
+	dec	rcx
 	jnz	loop
 
-	mov	edx, len_stars
-	mov	ecx, stars
-	mov	ebx, 1
-	mov	eax, 4
+	mov	rdx, len_stars
+	mov	rcx, stars
+	mov	rbx, 1
+	mov	rax, 4
 	int	0x80
-	mov	edx, 1
-	mov	ecx, nl
-	mov	ebx, 1
-	mov	eax, 4
+	mov	rdx, 1
+	mov	rcx, nl
+	mov	rbx, 1
+	mov	rax, 4
 	int	0x80
 
 	mov	ebx, 0
 	mov	eax, 1
 	int	0x80
+
+print_hello:
+	mov	rdx, len_msg
+	mov	rcx, msg
+	mov	rbx, 1
+	mov	rax, 4
+	int	0x80
+	ret
 
 section .data
 	msg db 'Hello, world!', 0xa 
