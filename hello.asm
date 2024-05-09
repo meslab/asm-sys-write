@@ -2,7 +2,7 @@ section .text
 	global _start
 
 _start:
-	mov	edx, 13
+	mov	edx, len_msg
 	mov	ecx, stars
 	mov	ebx, 1
 	mov	eax, 4
@@ -12,12 +12,19 @@ _start:
 	mov	ebx, 1
 	mov	eax, 4
 	int	0x80
-	mov	edx, len
+	mov ecx, 10
+loop:
+	mov [res], ecx
+	mov	edx, len_msg
 	mov	ecx, msg
 	mov	ebx, 1
 	mov	eax, 4
 	int	0x80
-	mov	edx, 13
+	mov ecx, [res]
+	dec	ecx
+	jnz	loop
+
+	mov	edx, len_stars
 	mov	ecx, stars
 	mov	ebx, 1
 	mov	eax, 4
@@ -33,8 +40,10 @@ _start:
 	int	0x80
 
 section .data
-msg times 9 db 'Hello, world!', 0xa 
-len equ $ - msg
-stars times 13 db '*'
-nl db 0xa
-count db 10
+	msg db 'Hello, world!', 0xa 
+	len_msg equ $ - msg
+	stars times len_msg db '*'
+	len_stars equ $ - stars
+	nl db 0xa
+section .bss
+	res resb 1
