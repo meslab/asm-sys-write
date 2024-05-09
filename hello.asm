@@ -1,6 +1,6 @@
 SYS_EXIT equ 1
-SYS_OPEN equ 2
-SYS_CLOSE equ 3
+SYS_OPEN equ 5
+SYS_CLOSE equ 6
 SYS_WRITE equ 4
 STDOUT equ 1
 _NOERRORS equ 0
@@ -11,7 +11,7 @@ section .text
 	global _start
 
 _start:
-	;call open_file
+	call open_file
 	mov	rdx, len_stars
 	mov	rcx, stars
 	mov	rbx, STDOUT
@@ -40,7 +40,7 @@ loop:
 	mov	rax, SYS_WRITE
 	int	0x80
 
-	;call close_file
+	call close_file
 	mov	rbx, _NOERRORS
 	mov	rax, SYS_EXIT
 	int	0x80
@@ -56,27 +56,31 @@ print_hello:
 	ret
 
 open_file:
-	push rax
-	push rdx
-	push rdi
-	push rsi
+	;push rax
+	;push rbx
+	;push rcx
+	;push rdx
+	;push rdi
+	;push rsi
 	mov	rax, SYS_OPEN
 	mov rdi, filename
 	mov rsi, 0x201
 	mov rdx, 0644
 	int	0x80
-	pop rsi
-	pop rdi
-	pop rdx
-	pop rax
+	;pop rsi
+	;pop rdi
+	;pop rdx
+	;pop rcx
+	;pop rbx
+	;pop rax
 	ret
 
 close_file:	
-	push rax
+	;push rax
 	mov	rax, SYS_CLOSE
 	mov	rdi, rax
 	int	0x80
-	pop rax
+	;pop rax
 	ret
 
 section .data
