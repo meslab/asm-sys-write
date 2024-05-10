@@ -23,7 +23,7 @@ _start:
 	mov	rbx, STDOUT
 	mov	rax, SYS_WRITE
 	int	0x80
-	rdtcs
+	rdtsc
 	mov rax, rdx
 	rdrand rax
 	mov rcx , rax
