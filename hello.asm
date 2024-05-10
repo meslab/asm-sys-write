@@ -1,29 +1,35 @@
-SYS_EXIT equ 1
-SYS_OPEN equ 5
-SYS_CLOSE equ 6
-SYS_CREATE equ 8
+SYS_EXIT equ 60
+SYS_CLOSE equ 3
+SYS_CREATE equ 2
 SYS_WRITE equ 4
 STDOUT equ 1
 _NOERRORS equ 0
 _ERRORS equ 1
 NL db 10
 
-section .text
-	global _start
+WRITE equ 1
 
-_start:
-	call open_file
-	mov	rdx, len_stars
-	mov	rcx, stars
-	mov	rbx, STDOUT
-	mov	rax, SYS_WRITE
-	int	0x80
-	mov	rdx, 1
-	mov	rcx, NL
-	mov	rbx, STDOUT
-	mov	rax, SYS_WRITE
-	int	0x80
-	mov rax, rdx
+%macro pushall 0
+    push rax
+    push rcx
+    push rdx
+    push rbx
+    push rbp
+    push rsi
+    push rdi
+%endmacro
+
+%macro popall 0
+    pop rdi
+    pop rsi
+    pop rbp
+    pop rbx
+    pop rdx
+    pop rcx
+    pop rax
+%endmacro
+
+%macro random_count 0
 	rdrand rax
 	mov rcx , rax
 	shr rdx, 64
@@ -31,6 +37,30 @@ _start:
 	idiv rcx
 	add rdx, 1
 	mov rcx, rdx
+%endmacro	
+
+%macro print_stars 0
+	mov	rdx, len_stars
+	mov	rsi, stars
+	mov	rdi, STDOUT
+	mov	rax, WRITE
+	syscall
+	mov	rdx, 1
+	mov	rsi, NL
+	mov	rdi, STDOUT
+	mov	rax, WRITE
+	syscall
+%endmacro
+
+section .text
+	global _start
+
+_start:
+	call open_file
+
+	print_stars
+
+	random_count
 	;mov rcx, 3
 
 loop:
@@ -39,78 +69,60 @@ loop:
 	dec	rcx
 	jnz	loop
 
-	mov	rdx, len_stars
-	mov	rcx, stars
-	mov	rbx, 1
-	mov	rax, 4
-	int	0x80
-	mov	rdx, 1
-	mov	rcx, NL
-	mov	rbx, STDOUT
-	mov	rax, SYS_WRITE
-	int	0x80
+	print_stars
 
 	call close_file
-	mov	rbx, _NOERRORS
+	mov	rdi, _NOERRORS
 	mov	rax, SYS_EXIT
-	int	0x80
+	syscall
 
 print_hello:
-	push rcx
+	pushall
 	mov	rdx, len_msg
-	mov	rcx, msg
-	mov	rbx, STDOUT
-	mov	rax, SYS_WRITE
-	int	0x80
-	pop rcx
+	mov	rsi, msg
+	mov	rdi, STDOUT
+	mov	rax, WRITE
+	syscall
+	popall
 	ret
 
 print_to_file:
-	push rdx
-	push rcx
-	push rbx
-	push rax
+	pushall
 	mov	rdx, len_msg
-	mov	rcx, msg
-	mov rbx, [fd]
-	mov	rax, SYS_WRITE
-	int	0x80
-	pop rax
-	pop rbx
-	pop rcx
-	pop rdx
+	mov	rsi, msg
+	mov rdi, [fd]
+	mov	rax, WRITE
+	syscall
+	popall
 	ret
 
 open_file:
-	push rax
-	push rbx
-	push rcx
+	pushall
 	mov	rax, SYS_CREATE
-	mov rbx, filename
-	mov rcx, 0o0644
-	int	0x80
+	mov rdi, filename
+	mov rsi, 0102o
+	mov rdx, 0644o
+	syscall
 	cmp rax, -1
     je file_error
 
 	mov	[fd], rax
 	
-	pop rcx
-	pop rbx
-	pop rax
+	popall
 	ret
 
 close_file:	
-	;push rax
+	pushall
 	mov	rax, SYS_CLOSE
-	mov	rbx, [fd]
-	int	0x80
-	;pop rax
+	mov	rdi, [fd]
+	syscall
+	popall
 	ret
 
 file_error:
-    mov rax, _ERRORS
-    mov rbx, SYS_EXIT
-    int 0x80
+    mov rdi, _ERRORS
+    mov rax, SYS_EXIT
+    syscall
 
 section .data
 	msg db 'Hello, world!', 0xa 
