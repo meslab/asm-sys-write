@@ -63,11 +63,11 @@ _start:
 	random_count
 	;mov rcx, 3
 
-loop:
+_loop:
 	call print_hello
 	call print_to_file
 	dec	rcx
-	jnz	loop
+	jnz	_loop
 
 	print_stars
 
