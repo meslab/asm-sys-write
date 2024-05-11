@@ -61,13 +61,7 @@ print_hello:
 	ret
 
 print_to_file:
-	;mov [count], rcx
 	pushall
-	mov rdx, 3
-	mov rsi, count
-	mov rdi, [fd]
-	mov rax, SYS_WRITE
-	syscall
 	mov	rdx, len_msg
 	mov	rsi, msg
 	mov rdi, [fd]
@@ -135,7 +129,6 @@ section .data
 	stars times len_msg  db '*', 0
 	len_stars equ $ - stars - 2
 	filename db 'file.txt', 0
-	count db 1, 0
 
 section .bss
 	fd resb 1
