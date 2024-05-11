@@ -13,8 +13,7 @@ _start:
 	call open_file
 	call print_stars
 	call random_count
-	;mov rcx, 3
-
+	
 .loop:
 	push rcx
 	call print_hello
@@ -26,9 +25,9 @@ _start:
 	call print_stars
 
 	call close_file
+
 	mov	rdi, _NOERRORS
-	mov	rax, SYS_EXIT
-	syscall
+	call exit
 
 print_hello:
 	mov	rdi, STDOUT
@@ -75,17 +74,21 @@ print_stars:
 
 random_count:
     rdrand rax
+	shr rax, 60
     mov rcx, 10
     xor rdx, rdx
-    div rcx
+    idiv rcx
     add rdx, 1
     mov rcx, rdx
     ret
 
 file_error:
     mov rdi, _ERRORS
-    mov rax, SYS_EXIT
-    syscall
+    call exit
+
+exit:
+	mov rax, SYS_EXIT
+	syscall
 
 section .data
 	msg db 'Hello, world!', 0xa 
