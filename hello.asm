@@ -1,13 +1,11 @@
 SYS_EXIT equ 60
 SYS_CLOSE equ 3
 SYS_CREATE equ 2
-SYS_WRITE equ 4
+SYS_WRITE equ 1
 STDOUT equ 1
 _NOERRORS equ 0
 _ERRORS equ 1
 NL db 10
-
-WRITE equ 1
 
 %macro pushall 0
     push rax
@@ -28,39 +26,15 @@ WRITE equ 1
     pop rcx
     pop rax
 %endmacro
-
-%macro random_count 0
-	rdrand rax
-	mov rcx , rax
-	shr rdx, 64
-	mov rcx, 10
-	idiv rcx
-	add rdx, 1
-	mov rcx, rdx
-%endmacro	
-
-%macro print_stars 0
-	mov	rdx, len_stars
-	mov	rsi, stars
-	mov	rdi, STDOUT
-	mov	rax, WRITE
-	syscall
-	mov	rdx, 1
-	mov	rsi, NL
-	mov	rdi, STDOUT
-	mov	rax, WRITE
-	syscall
-%endmacro
-
 section .text
 	global _start
 
 _start:
 	call open_file
 
-	print_stars
+	call print_stars
 
-	random_count
+	call random_count
 	;mov rcx, 3
 
 _loop:
@@ -69,7 +43,7 @@ _loop:
 	dec	rcx
 	jnz	_loop
 
-	print_stars
+	call print_stars
 
 	call close_file
 	mov	rdi, _NOERRORS
@@ -81,7 +55,7 @@ print_hello:
 	mov	rdx, len_msg
 	mov	rsi, msg
 	mov	rdi, STDOUT
-	mov	rax, WRITE
+	mov	rax, SYS_WRITE
 	syscall
 	popall
 	ret
@@ -91,7 +65,7 @@ print_to_file:
 	mov	rdx, len_msg
 	mov	rsi, msg
 	mov rdi, [fd]
-	mov	rax, WRITE
+	mov	rax, SYS_WRITE
 	syscall
 	popall
 	ret
@@ -118,6 +92,31 @@ close_file:
 	syscall
 	popall
 	ret
+
+print_stars:
+	pushall
+	mov	rdx, len_stars
+	mov	rsi, stars
+	mov	rdi, STDOUT
+	mov	rax, SYS_WRITE
+	syscall
+	mov	rdx, 1
+	mov	rsi, NL
+	mov	rdi, STDOUT
+	mov	rax, SYS_WRITE
+	syscall
+	popall
+	ret
+
+random_count:
+	rdrand rax
+	mov rcx , rax
+	shr rdx, 64
+	mov rcx, 10
+	idiv rcx
+	add rdx, 1
+	mov rcx, rdx
+	ret	
 
 file_error:
     mov rdi, _ERRORS
