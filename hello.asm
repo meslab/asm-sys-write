@@ -1,6 +1,6 @@
 SYS_EXIT equ 60
 SYS_CLOSE equ 3
-SYS_CREATE equ 2
+SYS_OPEN equ 2
 SYS_WRITE equ 1
 STDOUT equ 1
 _NOERRORS equ 0
@@ -61,7 +61,13 @@ print_hello:
 	ret
 
 print_to_file:
+	;mov [count], rcx
 	pushall
+	mov rdx, 3
+	mov rsi, count
+	mov rdi, [fd]
+	mov rax, SYS_WRITE
+	syscall
 	mov	rdx, len_msg
 	mov	rsi, msg
 	mov rdi, [fd]
@@ -72,9 +78,9 @@ print_to_file:
 
 open_file:
 	pushall
-	mov	rax, SYS_CREATE
+	mov	rax, SYS_OPEN
 	mov rdi, filename
-	mov rsi, 0102o
+	mov rsi, 1102o
 	mov rdx, 0644o
 	syscall
 	cmp rax, -1
@@ -129,6 +135,7 @@ section .data
 	stars times len_msg  db '*', 0
 	len_stars equ $ - stars - 2
 	filename db 'file.txt', 0
+	count db 1, 0
 
 section .bss
 	fd resb 1
