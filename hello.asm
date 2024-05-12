@@ -91,7 +91,7 @@ exit:
 	syscall
 
 section .data
-	msg db 'Hello, world!', 0xa 
+	msg db 'Still learning!', 0xa 
 	len_msg equ $ - msg
 	stars times len_msg - 1 db '*'
 	NL db 10
