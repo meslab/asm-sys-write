@@ -74,7 +74,7 @@ print_stars:
 
 random_count:
     rdrand rax
-	shr rax, 60
+    shr rax, 60
     mov rcx, 10
     xor rdx, rdx
     idiv rcx
