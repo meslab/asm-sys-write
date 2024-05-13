@@ -24,7 +24,7 @@ fmt: format
 install: build
 	cp $(name) ~/.local/bin/$(name)
 
-uninstall:
+uninstall: clean
 	rm -f ~/.local/bin/$(name)
 
 run: ./$(name)
