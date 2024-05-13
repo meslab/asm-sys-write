@@ -1,20 +1,30 @@
+name := $(shell basename $(shell pwd))
+
 nasm:
-	nasm -f elf64 hello.asm
+	nasm -f elf64 *.asm
 
 yasm:
-	yasm -f elf64 hello.asm
+	yasm -f elf64 *.asm
 
 link:
-	ld -m elf_x86_64 -s -o hello hello.o
+	ld -m elf_x86_64 -s -o $(name) *.o
 
 build: nasm link
-	./hello
+	./$(name)
 
 ybuild: clean yasm link
-	./hello
+	./$(name)
 
 clean:
-	rm -f hello hello.o file.txt
+	rm -f *.o *.txt $(name)
 
 format:
-	asm-format hello.asm
+	asm-format *.asm
+
+fmt: format	
+
+install:
+	cp $(name) ~/.local/bin/$(name)
+
+uninstall:
+	rm -f ~/.local/bin/$(name)
