@@ -16,3 +16,5 @@ ybuild: clean yasm link
 clean:
 	rm -f hello hello.o file.txt
 
+format:
+	asm-format hello.asm
