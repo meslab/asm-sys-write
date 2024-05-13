@@ -9,11 +9,9 @@ yasm:
 link:
 	ld -m elf_x86_64 -s -o $(name) *.o
 
-build: nasm link
-	./$(name)
+build: nasm link run
 
-ybuild: clean yasm link
-	./$(name)
+ybuild: clean yasm link run
 
 clean:
 	rm -f *.o *.txt $(name)
@@ -23,8 +21,10 @@ format:
 
 fmt: format	
 
-install:
+install: build
 	cp $(name) ~/.local/bin/$(name)
 
 uninstall:
 	rm -f ~/.local/bin/$(name)
+
+run: ./$(name)
