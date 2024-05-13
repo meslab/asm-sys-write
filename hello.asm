@@ -1,10 +1,10 @@
-SYS_EXIT equ 60
-SYS_CLOSE equ 3
-SYS_OPEN equ 2
-SYS_WRITE equ 1
-STDOUT  equ 1
-_NOERRORS equ 0
-_ERRORS equ 1
+SYS_EXIT      equ 60
+SYS_CLOSE     equ 3
+SYS_OPEN      equ 2
+SYS_WRITE     equ 1
+STDOUT        equ 1
+NOERROR       equ 0
+ERROR         equ 1
 
 section .text
     global  _start
@@ -26,7 +26,7 @@ _start:
 
     call    close_file
 
-    mov     rdi, _NOERRORS
+    mov      di, NOERROR
     call    exit
 
 print_hello:
@@ -82,7 +82,7 @@ random_count:
     ret
 
 file_error:
-    mov     rdi, _ERRORS
+    mov     rdi, ERROR
     call    exit
 
 exit:
@@ -93,7 +93,7 @@ section .data
     msg     db 'Still learning!', 0xa
     len_msg equ $ - msg
     stars   times len_msg - 1 db '*'
-    NL      db 10
+    NL            db 10
     len_strs equ $ - stars
     filename db 'file.txt', 0
 
