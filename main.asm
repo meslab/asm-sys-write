@@ -77,7 +77,7 @@ random_count:
     mov     rcx, 10
     xor     rdx, rdx
     idiv    rcx
-    add     rdx, 1
+    inc     rdx
     mov     rcx, rdx
     ret
 
@@ -92,8 +92,8 @@ exit:
 section .data
     msg     db 'Still learning x86-64 assembly language on linux!', 0xa
     len_msg equ $ - msg
-    sep   times len_msg - 1 db '='
-    NL      db 10
+    sep     times len_msg - 1 db '='
+    _nl     db 0xa
     len_sep equ $ - sep
     filename db 'file.txt', 0
 
