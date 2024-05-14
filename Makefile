@@ -1,3 +1,5 @@
+.SILENT:
+
 dst  := $(shell pwd)/dst
 ndst := $(dst)/nasm
 ydst := $(dst)/yasm
@@ -23,7 +25,7 @@ nasm: prep $(nobjs)
 
 yasm: prep $(yobjs)
 
-debug: prep $(dobjs)
+dasm: prep $(dobjs)
 
 $(ndst)/%.o: %.asm
 	nasm -f elf64 $< -o$@
@@ -31,16 +33,24 @@ $(ndst)/%.o: %.asm
 $(ydst)/%.o: %.asm
 	yasm -f elf64 $< -o$@
 
+$(ddst)/%.o: %.asm
+	nasm -f elf64 -g $< -o$@
+
 nlink:
 	ld -m elf_x86_64 -o $(bin)/$(name) $(ndst)/*.o
 
 ylink:
 	ld -m elf_x86_64 -o $(bin)/$(name) $(ydst)/*.o
 
+dlink:
+	ld -m elf_x86_64 -o $(bin)/$(name) $(ddst)/*.o
+
 build: nasm nlink run
 nbuild: build
 
 ybuild: yasm ylink run
+
+debug: dasm dlink drun
 
 clean:
 	rm -f *.o *.txt $(name) $(ddst)/* $(ndst)/* $(ydst)/* $(out)/* $(bin)/*
@@ -58,3 +68,6 @@ uninstall: clean
 
 run: 
 	$(bin)/$(name)
+
+drun:
+	gdb $(bin)/$(name)
