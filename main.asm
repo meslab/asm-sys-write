@@ -1,9 +1,14 @@
-SYS_EXIT    equ 60
-SYS_CLOSE   equ 3
-SYS_OPEN    equ 2
+; syscalls
 SYS_WRITE   equ 1
+SYS_OPEN    equ 2
+SYS_CLOSE   equ 3
+SYS_EXIT    equ 60
+
+; file descriptors
 STDOUT      equ 1
 STDERR      equ 2
+
+; error codes
 NOERROR     equ 0
 ERROR       equ 1
 
