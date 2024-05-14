@@ -71,3 +71,5 @@ run:
 
 drun:
 	gdb $(bin)/$(name)
+
+.PHONY: clean run build nbuild ybuild debug dasm dlink drun install uninstall fmt format
