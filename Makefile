@@ -32,10 +32,10 @@ $(ydst)/%.o: %.asm
 	yasm -f elf64 $< -o$@
 
 nlink:
-	ld -m elf_x86_64 -o $(name) $(ndst)/*.o
+	ld -m elf_x86_64 -o $(bin)/$(name) $(ndst)/*.o
 
 ylink:
-	ld -m elf_x86_64 -o $(name) $(ydst)/*.o
+	ld -m elf_x86_64 -o $(bin)/$(name) $(ydst)/*.o
 
 build: nasm nlink run
 nbuild: build
@@ -51,10 +51,10 @@ format:
 fmt: format	
 
 install: build
-	cp $(name) ~/.local/bin/$(name)
+	cp $(bin)/$(name) ~/.local/bin/$(name)
 
 uninstall: clean
 	rm -f ~/.local/bin/$(name)
 
 run: 
-	./$(name)
+	$(bin)/$(name)
