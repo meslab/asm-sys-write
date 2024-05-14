@@ -3,6 +3,7 @@ SYS_CLOSE   equ 3
 SYS_OPEN    equ 2
 SYS_WRITE   equ 1
 STDOUT      equ 1
+STDERR      equ 2
 NOERROR     equ 0
 ERROR       equ 1
 
@@ -44,6 +45,8 @@ print_msg:
     mov     rsi, msg
     mov     rax, SYS_WRITE
     syscall
+    test    rdi, rdi
+    jl      file_error
     ret
 
 open_file:
@@ -82,6 +85,12 @@ random_count:
     ret
 
 file_error:
+    mov     rdx, len_fe
+    mov     rsi, fe_msg
+    mov     rdi, STDERR
+    mov     rax, SYS_WRITE
+    syscall
+
     mov     rdi, ERROR
     call    exit
 
@@ -96,6 +105,8 @@ section .data
     _nl     db 0xa
     len_sep equ $ - sep
     filename db 'file.txt', 0
+    fe_msg  db 'Error writing to file!', 0xa
+    len_fe  equ $ - fe_msg
 
 section .bss
     fd      resb 1
