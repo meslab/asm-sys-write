@@ -4,7 +4,7 @@ name := $(shell basename $(shell pwd))
 debug:
 	nasm -f elf64 -g *.asm
 	ld -m elf_x86_64 -o $(name) *.o
-	dbg $(name)
+	gdb $(name)
 
 nasm:
 	nasm -f elf64 *.asm
