@@ -55,9 +55,8 @@ open_file:
     mov     rsi, 1102o
     mov     rdx, 0644o
     syscall
-    cmp     rax, -1
-    je      file_error
-
+    test    rdi, rdi
+    jl      file_error
     mov     [fd], rax
     ret
 

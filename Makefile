@@ -1,26 +1,49 @@
+dst  := $(shell pwd)/dst
+ndst := $(dst)/nasm
+ydst := $(dst)/yasm
+ddst := $(dst)/dbg
+
+asms  := $(wildcard *.asm)
+nobjs := $(patsubst %.asm,$(ndst)/%.o,$(asms))
+yobjs := $(patsubst %.asm,$(ydst)/%.o,$(asms))
+dobjs := $(patsubst %.asm,$(ddst)/%.o,$(asms))
+
 name := $(shell basename $(shell pwd))
+bin  := $(shell pwd)/bin
+out  := $(shell pwd)/out
 
+prep:
+	mkdir -p $(ndst)
+	mkdir -p $(ydst)
+	mkdir -p $(ddst)
+	mkdir -p $(out)
+	mkdir -p $(bin)
+	
+nasm: prep $(nobjs)
 
-debug:
-	nasm -f elf64 -g *.asm
-	ld -m elf_x86_64 -o $(name) *.o
-	gdb $(name)
+yasm: prep $(yobjs)
 
-nasm:
-	nasm -f elf64 *.asm
+debug: $(dobjs)
 
-yasm:
-	yasm -f elf64 *.asm
+$(ndst)/%.o: %.asm
+	nasm -f elf64 $< -o$@
 
-link:
-	ld -m elf_x86_64 -o $(name) *.o
+$(ydst)/%.o: %.asm
+	yasm -f elf64 $< -o$@
 
-build: nasm link run
+nlink:
+	ld -m elf_x86_64 -o $(name) $(ndst)/*.o
 
-ybuild: clean yasm link run
+ylink:
+	ld -m elf_x86_64 -o $(name) $(ydst)/*.o
+
+build: nasm nlink run
+nbuild: build
+
+ybuild: yasm ylink run
 
 clean:
-	rm -f *.o *.txt $(name)
+	rm -f *.o *.txt $(name) $(ddst)/* $(ndst)/* $(ydst)/* $(out)/* $(bin)/*
 
 format:
 	asm-format *.asm
