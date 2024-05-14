@@ -23,7 +23,7 @@ nasm: prep $(nobjs)
 
 yasm: prep $(yobjs)
 
-debug: $(dobjs)
+debug: prep $(dobjs)
 
 $(ndst)/%.o: %.asm
 	nasm -f elf64 $< -o$@
