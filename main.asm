@@ -11,30 +11,30 @@ section .text
 
 _start:
     call    open_file
-    call    print_stars
+    call    print_sep
     call    random_count
     
 .loop:
     push    rcx
-    call    print_to_stdout
-    call    print_to_file
+    call    prnt_msg_to_stdout
+    call    prnt_msg_to_file
     pop     rcx
     dec     rcx
     jnz     .loop
 
-    call    print_stars
+    call    print_sep
 
     call    close_file
 
     mov     rdi, NOERROR
     call    exit
 
-print_to_stdout:
+prnt_msg_to_stdout:
     mov     rdi, STDOUT
     call    print_msg
     ret
 
-print_to_file:
+prnt_msg_to_file:
     mov     rdi, [fd]
     call    print_msg
     ret
@@ -64,9 +64,9 @@ close_file:
     syscall
     ret
 
-print_stars:
-    mov     rdx, len_strs
-    mov     rsi, stars
+print_sep:
+    mov     rdx, len_sep
+    mov     rsi, sep
     mov     rdi, STDOUT
     mov     rax, SYS_WRITE
     syscall
@@ -92,9 +92,9 @@ exit:
 section .data
     msg     db 'Still learning!', 0xa
     len_msg equ $ - msg
-    stars   times len_msg - 1 db '*'
+    sep   times len_msg - 1 db '='
     NL      db 10
-    len_strs equ $ - stars
+    len_sep equ $ - sep
     filename db 'file.txt', 0
 
 section .bss
