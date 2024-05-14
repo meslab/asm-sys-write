@@ -90,7 +90,7 @@ exit:
     syscall
 
 section .data
-    msg     db 'Still learning!', 0xa
+    msg     db 'Still learning x86-64 assembly language on linux!', 0xa
     len_msg equ $ - msg
     sep   times len_msg - 1 db '='
     NL      db 10
