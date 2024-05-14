@@ -27,4 +27,5 @@ install: build
 uninstall: clean
 	rm -f ~/.local/bin/$(name)
 
-run: ./$(name)
+run: 
+	./$(name)

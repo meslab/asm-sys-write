@@ -16,7 +16,7 @@ _start:
     
 .loop:
     push    rcx
-    call    print_hello
+    call    print_to_stdout
     call    print_to_file
     pop     rcx
     dec     rcx
@@ -29,7 +29,7 @@ _start:
     mov     di, NOERROR
     call    exit
 
-print_hello:
+print_to_stdout:
     mov     rdi, STDOUT
     call    print_msg
     ret
