@@ -45,8 +45,8 @@ ylink:
 dlink:
 	ld -m elf_x86_64 -o $(bin)/$(name) $(ddst)/*.o
 
-build: nasm nlink run
-nbuild: build
+nbuild: nasm nlink run
+build: nbuild
 
 ybuild: yasm ylink run
 
