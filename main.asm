@@ -19,7 +19,7 @@ _start:
     call    open_file
     call    print_sep
     call    random_count
-    
+
 .loop:
     push    rcx
     call    prnt_msg_to_stdout
