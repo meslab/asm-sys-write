@@ -102,7 +102,7 @@ exit:
     mov     rax, SYS_EXIT
     syscall
 
-section .data
+section .rodata
     msg     db 'Still learning x86-64 assembly language on linux!', 0xa
     len_msg equ $ - msg
     sep     times len_msg - 1 db '='
