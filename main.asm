@@ -26,7 +26,7 @@ _start:
 
     call    close_file
 
-    mov     di, NOERROR
+    mov     rdi, NOERROR
     call    exit
 
 print_to_stdout:
