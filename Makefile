@@ -1,6 +1,6 @@
 .SILENT:
 
-DST  := DST
+DST  := dst
 NDST := $(DST)/nasm
 YDST := $(DST)/yasm
 DDIST := $(DST)/dbg
@@ -11,8 +11,8 @@ YOBJS := $(patsubst %.asm,$(YDST)/%.o,$(ASMS))
 DOBJS := $(patsubst %.asm,$(DDIST)/%.o,$(ASMS))
 
 NAME := $(shell basename $(PWD))
-BIN  := BIN
-OUT  := OUT
+BIN  := bin
+OUT  := out
 
 prep:
 	mkdir -p $(NDST)
