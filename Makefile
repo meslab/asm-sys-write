@@ -3,21 +3,21 @@
 DST  := dst
 NDST := $(DST)/nasm
 YDST := $(DST)/yasm
-DDIST := $(DST)/dbg
+DDST := $(DST)/dbg
 
 ASMS  := $(wildcard *.asm)
 NOBJS := $(patsubst %.asm,$(NDST)/%.o,$(ASMS))
 YOBJS := $(patsubst %.asm,$(YDST)/%.o,$(ASMS))
-DOBJS := $(patsubst %.asm,$(DDIST)/%.o,$(ASMS))
+DOBJS := $(patsubst %.asm,$(DDST)/%.o,$(ASMS))
 
-NAME := $(shell basename $(PWD))
+PROGRAM := $(shell basename $(PWD))
 BIN  := bin
 OUT  := out
 
 prep:
 	mkdir -p $(NDST)
 	mkdir -p $(YDST)
-	mkdir -p $(DDIST)
+	mkdir -p $(DDST)
 	mkdir -p $(OUT)
 	mkdir -p $(BIN)
 	
@@ -33,27 +33,27 @@ $(NDST)/%.o: %.asm
 $(YDST)/%.o: %.asm
 	yasm -f elf64 $< -o$@
 
-$(DDIST)/%.o: %.asm
+$(DDST)/%.o: %.asm
 	nasm -f elf64 -g $< -o$@
 
 nlink:
-	ld -m elf_x86_64 -o $(BIN)/$(NAME) $(NDST)/*.o
+	ld -m elf_x86_64 -o $(BIN)/$(PROGRAM) $(NDST)/*.o
 
 ylink:
-	ld -m elf_x86_64 -o $(BIN)/$(NAME) $(YDST)/*.o
+	ld -m elf_x86_64 -o $(BIN)/$(PROGRAM) $(YDST)/*.o
 
 dlink:
-	ld -m elf_x86_64 -o $(BIN)/$(NAME) $(DDIST)/*.o
+	ld -m elf_x86_64 -o $(BIN)/$(PROGRAM) $(DDST)/*.o
 
-nbuild: nasm nlink run
+nbuild: nasm nlink 
 build: nbuild
 
-ybuild: yasm ylink run
+ybuild: yasm ylink
 
 debug: dasm dlink drun
 
 clean:
-	rm -f *.o *.txt $(NAME) $(DDIST)/* $(NDST)/* $(YDST)/* $(OUT)/* $(BIN)/*
+	rm -f *.o *.txt $(PROGRAM) $(DDST)/* $(NDST)/* $(YDST)/* $(OUT)/* $(BIN)/*
 
 format:
 	asm-format *.asm
@@ -61,15 +61,26 @@ format:
 fmt: format	
 
 install: build
-	cp $(BIN)/$(NAME) ~/.local/BIN/$(NAME)
+	@echo "Installing $(PROGRAM) to ~/.local/bin/$(PROGRAM)"
+	cp $(BIN)/$(PROGRAM) ~/.local/bin/$(PROGRAM)
 
 uninstall: clean
-	rm -f ~/.local/BIN/$(NAME)
+	echo "Uninstalling $(PROGRAM) from ~/.local/bin/$(PROGRAM)"
+	rm -f ~/.local/bin/$(PROGRAM)
 
-run: 
-	$(BIN)/$(NAME)
+run: build
+	$(BIN)/$(PROGRAM)
 
 drun:
-	gdb $(BIN)/$(NAME)
+	gdb $(BIN)/$(PROGRAM)
 
-.PHONY: prep clean run build nbuild ybuild debug dasm dlink drun install uninstall fmt format
+nrun: nbuild
+	$(BIN)/$(PROGRAM)
+
+yrun: ybuild
+	$(BIN)/$(PROGRAM)
+
+nrun: nbuild nrun
+yrun: ybuild yrun
+
+.PHONY: prep clean run build nbuild ybuild debug dasm dlink drun install uninstall fmt format nasm yasm nlink ylink nrun yrun
