@@ -1,49 +1,49 @@
 .SILENT:
 
-dst  := $(shell pwd)/dst
-ndst := $(dst)/nasm
-ydst := $(dst)/yasm
-ddst := $(dst)/dbg
+DST  := DST
+NDST := $(DST)/nasm
+YDST := $(DST)/yasm
+DDIST := $(DST)/dbg
 
-asms  := $(wildcard *.asm)
-nobjs := $(patsubst %.asm,$(ndst)/%.o,$(asms))
-yobjs := $(patsubst %.asm,$(ydst)/%.o,$(asms))
-dobjs := $(patsubst %.asm,$(ddst)/%.o,$(asms))
+ASMS  := $(wildcard *.asm)
+NOBJS := $(patsubst %.asm,$(NDST)/%.o,$(ASMS))
+YOBJS := $(patsubst %.asm,$(YDST)/%.o,$(ASMS))
+DOBJS := $(patsubst %.asm,$(DDIST)/%.o,$(ASMS))
 
-name := $(shell basename $(shell pwd))
-bin  := $(shell pwd)/bin
-out  := $(shell pwd)/out
+NAME := $(shell basename $(PWD))
+BIN  := BIN
+OUT  := OUT
 
 prep:
-	mkdir -p $(ndst)
-	mkdir -p $(ydst)
-	mkdir -p $(ddst)
-	mkdir -p $(out)
-	mkdir -p $(bin)
+	mkdir -p $(NDST)
+	mkdir -p $(YDST)
+	mkdir -p $(DDIST)
+	mkdir -p $(OUT)
+	mkdir -p $(BIN)
 	
-nasm: prep $(nobjs)
+nasm: prep $(NOBJS)
 
-yasm: prep $(yobjs)
+yasm: prep $(YOBJS)
 
-dasm: prep $(dobjs)
+dasm: prep $(DOBJS)
 
-$(ndst)/%.o: %.asm
+$(NDST)/%.o: %.asm
 	nasm -f elf64 $< -o$@
 
-$(ydst)/%.o: %.asm
+$(YDST)/%.o: %.asm
 	yasm -f elf64 $< -o$@
 
-$(ddst)/%.o: %.asm
+$(DDIST)/%.o: %.asm
 	nasm -f elf64 -g $< -o$@
 
 nlink:
-	ld -m elf_x86_64 -o $(bin)/$(name) $(ndst)/*.o
+	ld -m elf_x86_64 -o $(BIN)/$(NAME) $(NDST)/*.o
 
 ylink:
-	ld -m elf_x86_64 -o $(bin)/$(name) $(ydst)/*.o
+	ld -m elf_x86_64 -o $(BIN)/$(NAME) $(YDST)/*.o
 
 dlink:
-	ld -m elf_x86_64 -o $(bin)/$(name) $(ddst)/*.o
+	ld -m elf_x86_64 -o $(BIN)/$(NAME) $(DDIST)/*.o
 
 nbuild: nasm nlink run
 build: nbuild
@@ -53,7 +53,7 @@ ybuild: yasm ylink run
 debug: dasm dlink drun
 
 clean:
-	rm -f *.o *.txt $(name) $(ddst)/* $(ndst)/* $(ydst)/* $(out)/* $(bin)/*
+	rm -f *.o *.txt $(NAME) $(DDIST)/* $(NDST)/* $(YDST)/* $(OUT)/* $(BIN)/*
 
 format:
 	asm-format *.asm
@@ -61,15 +61,15 @@ format:
 fmt: format	
 
 install: build
-	cp $(bin)/$(name) ~/.local/bin/$(name)
+	cp $(BIN)/$(NAME) ~/.local/BIN/$(NAME)
 
 uninstall: clean
-	rm -f ~/.local/bin/$(name)
+	rm -f ~/.local/BIN/$(NAME)
 
 run: 
-	$(bin)/$(name)
+	$(BIN)/$(NAME)
 
 drun:
-	gdb $(bin)/$(name)
+	gdb $(BIN)/$(NAME)
 
-.PHONY: clean run build nbuild ybuild debug dasm dlink drun install uninstall fmt format
+.PHONY: prep clean run build nbuild ybuild debug dasm dlink drun install uninstall fmt format
