@@ -80,7 +80,4 @@ nrun: nbuild
 yrun: ybuild
 	$(BIN)/$(PROGRAM)
 
-nrun: nbuild nrun
-yrun: ybuild yrun
-
 .PHONY: prep clean run build nbuild ybuild debug dasm dlink drun install uninstall fmt format nasm yasm nlink ylink nrun yrun
