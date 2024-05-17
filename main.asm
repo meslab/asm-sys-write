@@ -21,11 +21,9 @@ _start:
     call    random_count
 
 .loop:
-    push    rcx
     call    prnt_msg_to_stdout
     call    prnt_msg_to_file
-    pop     rcx
-    dec     rcx
+    dec     rbx
     jnz     .loop
 
     call    print_sep
@@ -41,7 +39,7 @@ prnt_msg_to_stdout:
     ret
 
 prnt_msg_to_file:
-    mov     rdi, [fd]
+    mov     rdi, r15
     call    print_msg
     ret
 
@@ -62,12 +60,12 @@ open_file:
     syscall
     test    rax, rax
     jl      file_error
-    mov     [fd], rax
+    mov     r15, rax
     ret
 
 close_file:
     mov     rax, SYS_CLOSE
-    mov     rdi, [fd]
+    mov     rdi, r15
     syscall
     ret
 
@@ -85,7 +83,7 @@ random_count:
     xor     rdx, rdx
     idiv    rcx
     inc     rdx
-    mov     rcx, rdx
+    mov     rbx, rdx
     ret
 
 file_error:
@@ -111,6 +109,3 @@ section .rodata
     output  db 'out/file.txt', 0
     fe_msg  db 'Error writing to file!', 0xa
     len_fe  equ $ - fe_msg
-
-section .bss
-    fd      resb 1
