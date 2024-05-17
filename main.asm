@@ -56,7 +56,7 @@ print_msg:
 
 open_file:
     mov     rax, SYS_OPEN
-    mov     rdi, filename
+    mov     rdi, output
     mov     rsi, 1102o
     mov     rdx, 0644o
     syscall
@@ -108,7 +108,7 @@ section .rodata
     sep     times len_msg - 1 db '='
     _nl     db 0xa
     len_sep equ $ - sep
-    filename db 'out/file.txt', 0
+    output  db 'out/file.txt', 0
     fe_msg  db 'Error writing to file!', 0xa
     len_fe  equ $ - fe_msg
 
