@@ -39,7 +39,7 @@ prnt_msg_to_stdout:
     ret
 
 prnt_msg_to_file:
-    mov     rdi, r15
+    mov     rdi, r9
     call    print_msg
     ret
 
@@ -60,12 +60,12 @@ open_file:
     syscall
     test    rax, rax
     jl      file_error
-    mov     r15, rax
+    mov     r9, rax
     ret
 
 close_file:
     mov     rax, SYS_CLOSE
-    mov     rdi, r15
+    mov     rdi, r9
     syscall
     ret
 
