@@ -23,7 +23,7 @@ _start:
 .loop:
     call    prnt_msg_to_stdout
     call    prnt_msg_to_file
-    dec     rbx
+    dec     r8
     jnz     .loop
 
     call    print_sep
@@ -83,7 +83,7 @@ random_count:
     xor     rdx, rdx
     idiv    rcx
     inc     rdx
-    mov     rbx, rdx
+    mov     r8, rdx
     ret
 
 file_error:
