@@ -49,7 +49,7 @@ print_msg:
     mov     rax, SYS_WRITE
     syscall
     test    rdi, rdi
-    jl      file_error
+    jl      file_write_error
     ret
 
 open_file:
@@ -59,7 +59,7 @@ open_file:
     mov     rdx, 0644o
     syscall
     test    rax, rax
-    jl      file_error
+    jl      file_open_error
     mov     r9, rax
     ret
 
@@ -86,8 +86,18 @@ random_count:
     mov     r8, rdx
     ret
 
-file_error:
-    mov     rdx, len_fe
+file_open_error:
+    mov     rdx, len_feo
+    mov     rsi, fe_opn
+    mov     rdi, STDERR
+    mov     rax, SYS_WRITE
+    syscall
+
+    mov     rdi, ERROR
+    call    exit
+
+file_write_error:
+    mov     rdx, len_few
     mov     rsi, fe_msg
     mov     rdi, STDERR
     mov     rax, SYS_WRITE
@@ -107,5 +117,7 @@ section .rodata
     _nl     db 0xa
     len_sep equ $ - sep
     output  db 'out/file.txt', 0
+    fe_opn  db 'Error opening file!', 0xa
+    len_feo equ $ - fe_opn
     fe_msg  db 'Error writing to file!', 0xa
-    len_fe  equ $ - fe_msg
+    len_few  equ $ - fe_msg
